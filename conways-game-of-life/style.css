@@ -1,0 +1,26 @@
+.main-container {
+    width: 96vw;
+    height: 95vh; 
+    background-color: red;
+    display: grid; 
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    justify-content: center;
+    gap: 1px; 
+}
+
+.cell-group {
+    display: grid;
+    border: gray;
+    border-width: 2px;
+    background-color: purple;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 1px; 
+}
+
+.cell {
+    border: gray;
+    border-width: 2px;
+    background-color: lightseagreen; 
+}
