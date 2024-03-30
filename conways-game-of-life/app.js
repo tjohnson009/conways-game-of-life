@@ -5,6 +5,7 @@ class Gridfield {
     }
     numCellgroups = 5; // default size for our game - one side
     totalNumOfCycles = 0;
+    speed = 100; 
 
     startLife() {
         this.gameStatus = true; 
