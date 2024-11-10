@@ -19,7 +19,7 @@ export default function Gameboard() {
         let test = new Cell(ctx, 50, 50); 
         // ctx.fillStyle = Cell.ALIVE_COLOR; 
         test.drawHexagonCell(ctx, 150, 150); 
-        ctx.fill(); 
+        // ctx.fill(); 
     })
 
     //fill the canvas with cells

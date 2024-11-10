@@ -44,9 +44,9 @@ export default class Cell {
             }
         }
         context.closePath(); 
-        context.stroke();  
+        context.stroke();  // this might not be necessary... 
         context.fillStyle = Cell.ALIVE_COLOR; 
-        // context.fill(); 
+        context.fill(); 
         console.log('Hexagon cell drawn'); 
     }
 }
