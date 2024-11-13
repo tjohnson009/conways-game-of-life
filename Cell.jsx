@@ -23,6 +23,10 @@ export default class Cell {
         this.comeAlive(); 
     }
 
+    checkNeighboringCells() {
+
+    }
+
     comeAlive() {
         this.status = 1; 
     }
@@ -31,16 +35,16 @@ export default class Cell {
         this.status = 0; 
     }
 
-    drawHexagonCell(context, xCoordinate, yCoordinate) {
+    drawHexagonCell(context, xCenter, yCenter) {
         const a = 2 * Math.PI / 6;
         const r = Cell.height / 2;
 
         context.beginPath(); 
         for(let i = 0; i < 6; i++) { 
             if (i === 0) {
-                context.moveTo(xCoordinate + r * Math.cos(a * i), yCoordinate + r * Math.sin(a * i)); 
+                context.moveTo(xCenter + r * Math.cos(a * i), yCenter + r * Math.sin(a * i)); 
             } else {
-                context.lineTo(xCoordinate + r * Math.cos(a * i), yCoordinate + r * Math.sin(a * i)); 
+                context.lineTo(xCenter + r * Math.cos(a * i), yCenter + r * Math.sin(a * i)); 
             }
         }
         context.closePath(); 
@@ -48,6 +52,6 @@ export default class Cell {
 
         context.fillStyle = this.status === 1 ? Cell.ALIVE_COLOR : Cell.DEAD_COLOR; 
         context.fill(); 
-        console.log('Hexagon cell drawn'); 
+        // console.log('Hexagon cell drawn'); 
     }
 }

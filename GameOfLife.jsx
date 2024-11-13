@@ -31,7 +31,7 @@ export default function GameOfLife() {
         }, []); // ensure this function only runs once - only draw the canvas once
         
         // initialize cells and the gameboard
-        useEffect(() => {
+    useEffect(() => {
         let numRows = CANVAS_HEIGHT / Cell.height;
         let numCols = CANVAS_WIDTH / Cell.width;
         let nextLifecycle = []; 
@@ -40,12 +40,42 @@ export default function GameOfLife() {
                     nextLifecycle.push(new Cell(canvasState.context, x, y));
                 }
             }
-            console.log(gameboard); 
+            // console.log(gameboard); 
             // console.log(canvasState); 
             setGameboard(nextLifecycle); 
         }, [canvasState]); 
+
+        function drawAllCells() {
+            gameboard.forEach((cell, index) => {
+                let xPoint = 10;
+                let yPoint = 10; 
+                let step = 20; 
+                let xStep = 20; 
+                let yStep = 10; 
+                // modulo 128 step up y, set x to 0
+                // cell.drawHexagonCell(canvasState.context, 0,0)
+
+                // determine the cell's position in the grid as x and y coordinates (top left corner)
+                // for (let x = 0; x < CANVAS_HEIGHT / Cell.height; x++) {
+                //     for (let y = 0; y < CANVAS_WIDTH / Cell.width; y++) {
+                //         console.log(x, y); 
+                //     }
+                // }
+                // offset the x and y position by 10px vertically and horizontally
+                // render the cell
+            }); 
+        }
         
-        
+       function oneLifecycle() {
+            // console.log(1); 
+            // assess which cells will be alive next round - update state
+            // clear the canvas
+            // draw the new cells in
+            // drawAllCells(); 
+        }
+        // oneLifecycle(); 
+        drawAllCells(); 
+
         return (
             <>
         {/* <h1>This is the gameboard. We&apos;re gonna do Canvas for this one...</h1> */}
