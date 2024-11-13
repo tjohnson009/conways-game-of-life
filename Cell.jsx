@@ -1,11 +1,11 @@
 export default class Cell {
-    static height = 10;
-    static width = 10;  
+    static height = 20;
+    static width = 20;  
     static DEAD_COLOR = 'rgb(8,8,8)'; 
     static ALIVE_COLOR = '#F8F8FF'; 
 
     constructor(context, startX, startY) {
-        this.status = 0; // 0 = dead, 1 = alive
+        this.status = Math.random() > .45 ? 1 : 0; // 0 = dead, 1 = alive / slightly higher chance of being alive at the start
         this.context = context; 
         this.startX = startX; 
         this.startX = startX; 
@@ -31,21 +31,22 @@ export default class Cell {
         this.status = 0; 
     }
 
-    drawHexagonCell(context, centerX, centerY) {
+    drawHexagonCell(context, xCoordinate, yCoordinate) {
         const a = 2 * Math.PI / 6;
         const r = Cell.height / 2;
 
         context.beginPath(); 
         for(let i = 0; i < 6; i++) { 
             if (i === 0) {
-                context.moveTo(centerX + r * Math.cos(a * i), centerY + r * Math.sin(a * i)); 
+                context.moveTo(xCoordinate + r * Math.cos(a * i), yCoordinate + r * Math.sin(a * i)); 
             } else {
-                context.lineTo(centerX + r * Math.cos(a * i), centerY + r * Math.sin(a * i)); 
+                context.lineTo(xCoordinate + r * Math.cos(a * i), yCoordinate + r * Math.sin(a * i)); 
             }
         }
         context.closePath(); 
         context.stroke();  // this might not be necessary... 
-        context.fillStyle = Cell.ALIVE_COLOR; 
+
+        context.fillStyle = this.status === 1 ? Cell.ALIVE_COLOR : Cell.DEAD_COLOR; 
         context.fill(); 
         console.log('Hexagon cell drawn'); 
     }
