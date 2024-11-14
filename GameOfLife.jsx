@@ -40,29 +40,28 @@ export default function GameOfLife() {
                     nextLifecycle.push(new Cell(canvasState.context, x, y));
                 }
             }
-            // console.log(gameboard); 
+            console.log(gameboard); 
             // console.log(canvasState); 
             setGameboard(nextLifecycle); 
         }, [canvasState]); 
 
-        function drawAllCells() {
+    function drawAllCells() { 
+            let xPoint = 10;
+            let yPoint = 10; 
+            let step = 20; 
             gameboard.forEach((cell, index) => {
-                let xPoint = 10;
-                let yPoint = 10; 
-                let step = 20; 
-                let xStep = 20; 
-                let yStep = 10; 
+                // let xStep = 20; 
+                // let yStep = 20; 
                 // modulo 128 step up y, set x to 0
-                // cell.drawHexagonCell(canvasState.context, 0,0)
-
-                // determine the cell's position in the grid as x and y coordinates (top left corner)
-                // for (let x = 0; x < CANVAS_HEIGHT / Cell.height; x++) {
-                //     for (let y = 0; y < CANVAS_WIDTH / Cell.width; y++) {
-                //         console.log(x, y); 
-                //     }
-                // }
-                // offset the x and y position by 10px vertically and horizontally
-                // render the cell
+                if (index % 63 === 0 && index !== 0) { // then we are at the last cell on the right side of the grid
+                    cell.drawHexagonCell(canvasState.context, xPoint, yPoint);
+                    // debugger; 
+                    yPoint += step;
+                    xPoint = 10; 
+                } else {
+                    cell.drawHexagonCell(canvasState.context, xPoint, yPoint);
+                    xPoint += step; 
+                }
             }); 
         }
         

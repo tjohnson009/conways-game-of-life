@@ -4,12 +4,11 @@ export default class Cell {
     static DEAD_COLOR = 'rgb(8,8,8)'; 
     static ALIVE_COLOR = '#F8F8FF'; 
 
-    constructor(context, startX, startY) {
+    constructor(context, xPos, yPos) {
         this.status = Math.random() > .45 ? 1 : 0; // 0 = dead, 1 = alive / slightly higher chance of being alive at the start
         this.context = context; 
-        this.startX = startX; 
-        this.startX = startX; 
-        this.startY = startY; 
+        this.xPos = xPos; 
+        this.yPos = yPos; 
     }
     // ctx.fillStyle = Cell.ALIVE_COLOR; 
     // ctx.fillRect(50, 50, 10, 10); 
@@ -39,6 +38,8 @@ export default class Cell {
         const a = 2 * Math.PI / 6;
         const r = Cell.height / 2;
 
+        // context.strokeStyle = this.status === 1 ? Cell.ALIVE_COLOR : Cell.DEAD_COLOR; // react is running twice - so these show the first iterations borders
+        context.strokeStyle = Cell.DEAD_COLOR; // 
         context.beginPath(); 
         for(let i = 0; i < 6; i++) { 
             if (i === 0) {
