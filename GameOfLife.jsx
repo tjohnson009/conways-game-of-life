@@ -40,7 +40,7 @@ export default function GameOfLife() {
                     nextLifecycle.push(new Cell(canvasState.context, x, y));
                 }
             }
-            console.log(gameboard); 
+            // console.log(gameboard); 
             // console.log(canvasState); 
             setGameboard(nextLifecycle); 
         }, [canvasState]); 
@@ -53,7 +53,7 @@ export default function GameOfLife() {
                 // let xStep = 20; 
                 // let yStep = 20; 
                 // modulo 128 step up y, set x to 0
-                if (index % 63 === 0 && index !== 0) { // then we are at the last cell on the right side of the grid
+                if ((index + 1) % 64 === 0 && index !== 0) { // then we are at the last cell on the right side of the grid
                     cell.drawHexagonCell(canvasState.context, xPoint, yPoint);
                     // debugger; 
                     yPoint += step;
