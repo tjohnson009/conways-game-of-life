@@ -13,8 +13,8 @@ export default class Cell {
     // ctx.fillStyle = Cell.ALIVE_COLOR; 
     // ctx.fillRect(50, 50, 10, 10); 
 
-    getStatus() {
-        return this.status; 
+    isAlive() {
+        return this.status === 1 ? true: false; 
     }
 
     handleClick() {
@@ -22,9 +22,33 @@ export default class Cell {
         this.comeAlive(); 
     }
 
-    checkNeighboringCells() {
-
+    getNumOfAliveNeighbors(xPos, yPos) {
+    // getValidNeighborhoodPositions(xPos, yPos) {
+    // getNumOfAliveNeighbors() {
+        // return gameboard[gridToArrayIndex(xPos, yPos)].reduce((totalAliveNeighbors, cell) => {
+        // }, 0); 
+    let validNeighbors = []
+    // console.log(this.context.canvas.width); 
+        for (let y = this.yPos - 1; y <= this.yPos + 1; y++) {
+            for (let x = this.xPos - 1; x <= this.xPos +1; x++) {
+        // for (let y = this.yPos - 1; y <= this.yPos + 1; y++) {
+        //     for (let x = this.xPos - 1; x <= this.xPos +1; x++) {
+                if (x < 0 || x >= (this.context.canvas.width / Cell.width) || y < 0 || y >= (this.context.canvas.height / Cell.height)) {
+                    continue; 
+                } else if (x === xPos && y === yPos) {
+                // } else if (x === this.xPos && y === this.yPos) {
+                    continue; 
+                }
+                // return gameboard[gridToArrayIndex(xPos, yPos)].isAlive()
+                validNeighbors.push([x, y]); 
+            }
+        }
+        return validNeighbors.reduce((num, cell) => {
+            return num + (cell.isAlive() ? 1 : 0)
+        }, 0); 
+        // console.log(validNeighbors.length); 
     }
+    
 
     comeAlive() {
         this.status = 1; 

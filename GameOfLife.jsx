@@ -5,8 +5,11 @@ export default function GameOfLife() {
     // aspect ratio is around 16:10 - 76 cells x 128 cells for 20 x 20 cells - 2342 total cells
     const CANVAS_WIDTH = 1280; 
     const CANVAS_HEIGHT = 760; 
+    const speed = 1000; // ms
     const [gameboard, setGameboard] = useState([]);
-    const [canvasState, setCanvasState] = useState({ canvas:null, context: null }); 
+    const [canvasState, setCanvasState] = useState({ canvas: null, context: null, height: CANVAS_HEIGHT, width: CANVAS_WIDTH }); // why are we using state for canvas? I forgot...
+    const numRows = CANVAS_HEIGHT / Cell.height;
+    const numCols = CANVAS_WIDTH / Cell.width;
     // const canvas = document.getElementById('canvas'); 
     // const context = canvas.getContext('2d'); 
     
@@ -34,15 +37,15 @@ export default function GameOfLife() {
     useEffect(() => {
         let numRows = CANVAS_HEIGHT / Cell.height;
         let numCols = CANVAS_WIDTH / Cell.width;
-        let nextLifecycle = []; 
+        let initialGameboard = []; 
             for (let y = 0; y < numRows; y++) {
                 for (let x = 0; x < numCols; x++) {
-                    nextLifecycle.push(new Cell(canvasState.context, x, y));
+                    initialGameboard.push(new Cell(canvasState.context, x, y));
                 }
             }
-            // console.log(gameboard); 
+            // console.log(gameboard); // []
             // console.log(canvasState); 
-            setGameboard(nextLifecycle); 
+            setGameboard(initialGameboard); 
         }, [canvasState]); 
 
     function drawAllCells() { 
@@ -50,10 +53,10 @@ export default function GameOfLife() {
             let yPoint = 10; 
             let step = 20; 
             gameboard.forEach((cell, index) => {
-                // let xStep = 20; 
+                // let xStep = 
                 // let yStep = 20; 
                 // modulo 128 step up y, set x to 0
-                if ((index + 1) % 64 === 0 && index !== 0) { // then we are at the last cell on the right side of the grid
+                if ((index + 1) % 64 === 0) { // then we are at the last cell on the right side of the grid
                     cell.drawHexagonCell(canvasState.context, xPoint, yPoint);
                     // debugger; 
                     yPoint += step;
@@ -64,16 +67,49 @@ export default function GameOfLife() {
                 }
             }); 
         }
-        
-       function oneLifecycle() {
-            // console.log(1); 
-            // assess which cells will be alive next round - update state
-            // clear the canvas
-            // draw the new cells in
-            // drawAllCells(); 
+
+        function gridToArrayIndex(x, y) {
+            return x + (y * numCols);
         }
-        // oneLifecycle(); 
-        drawAllCells(); 
+
+        function getCell(x, y) {
+            return gameboard.filter((cell) => {
+                return x === cell.xPos && y === cell.yPos; 
+            })
+        }
+        
+       function lifecycleLoop() {
+        // let nextLifeCycle = []; 
+        if (!canvasState.context) {return}
+
+            // assess which cells will be alive next round - update state
+                // determine which cells are alive and dead
+                let updatedGameboard = []; 
+                // for (let y = 0; y < numRows; y++) {
+                //     for (let x = 0; x < numCols; x++) {
+                //     }
+                // }
+                gameboard.forEach(cell => cell.getNumOfAliveNeighbors(cell.xPos, cell.yPos)); 
+
+                
+
+
+            // clear the canvas then redraw the background color
+            canvasState.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            canvasState.context.fillStyle = 'rgb(8,8,8)';
+            canvasState.context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // draw the new cells in
+            drawAllCells(); 
+
+            // loop this whole process on a timer
+        //     setTimeout(() => {
+        //        window.requestAnimationFrame(() => lifecycleLoop());
+        //    }, speed) 
+        }
+
+        // initial state of the game ?? 
+         window.requestAnimationFrame(() => lifecycleLoop()); 
 
         return (
             <>
