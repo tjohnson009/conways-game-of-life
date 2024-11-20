@@ -107,8 +107,8 @@ export default function GameOfLife() {
                             return num + (gameboard[index].isAlive() ? 1 : 0); 
                     }, 0); 
                     // does the cell live or die
-        let newCell = new Cell(context, cell.xPos, cell.yPos); 
-        newCell.status = cell.isAlive() ? (numAliveNeighbors === 2 || numAliveNeighbors === 3) ? 1 : 0 : numAliveNeighbors === 3 ? 1 : 0; 
+        // let newCell = new Cell(context, cell.xPos, cell.yPos); 
+        // newCell.status = cell.isAlive() ? (numAliveNeighbors === 2 || numAliveNeighbors === 3) ? 1 : 0 : numAliveNeighbors === 3 ? 1 : 0; 
         
         // if (cell.isAlive()) {
         //     if (numAliveNeighbors === 2 || numAliveNeighbors === 3) {
@@ -125,24 +125,23 @@ export default function GameOfLife() {
         // }        
 
                         // console.log(numAliveNeighbors); 
-                        // if (numAliveNeighbors === 2) {
-                        //     // Do nothing, don't change state
-                        // } else if (numAliveNeighbors === 3) {
-                        //     // Make alive
-                        //     // cell.comeAlive();
+                        if (numAliveNeighbors === 2) {
+                            // Do nothing, don't change state
+                        } else if (numAliveNeighbors === 3) {
+                            // Make alive
+                            cell.comeAlive();
+                        } else {
+                            // Make dead
+                            cell.die(); 
+                        }
 
-                        // } else {
-                        //     // Make dead
-                        //     cell.die(); 
-                        // }
-
-                        return newCell; 
+                        // return newCell; 
                 }); 
 
         // update the next gameboard
-                // updatedGameboard.forEach(cell => {
-                //     cell.status = cell.statusNextCycle; 
-                // }); 
+                updatedGameboard.forEach(cell => {
+                    cell.status = cell.statusNextCycle; 
+                }); 
 
         // // update the state
         setGameboard(updatedGameboard); 
@@ -150,9 +149,9 @@ export default function GameOfLife() {
 
         // clear the canvas then redraw the background color
             // canvasRef.current.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            context.fillStyle = 'rgb(8,8,8)';
-            context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            // context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            // context.fillStyle = 'rgb(8,8,8)';
+            // context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // draw the new cells in
             drawAllCells(); 
