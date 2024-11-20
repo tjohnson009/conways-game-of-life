@@ -24,7 +24,7 @@ export default class Cell {
     }
 
     // getNumOfAliveNeighbors(xPos, yPos) {
-    getValidNeighborPositions(xPos, yPos) {
+    getValidNeighborPositions(xPos, yPos, canvas) {
     // getNumOfAliveNeighbors() {
         // return gameboard[gridToArrayIndex(xPos, yPos)].reduce((totalAliveNeighbors, cell) => {
         // }, 0); 
@@ -34,7 +34,8 @@ export default class Cell {
             for (let x = this.xPos - 1; x <= this.xPos +1; x++) {
         // for (let y = this.yPos - 1; y <= this.yPos + 1; y++) {
         //     for (let x = this.xPos - 1; x <= this.xPos +1; x++) {
-                if (x < 0 || x >= (this.context.canvas.width / Cell.width) || y < 0 || y >= (this.context.canvas.height / Cell.height)) {
+                if (x < 0 || x >= (canvas.width / Cell.width) || y < 0 || y >= (canvas.height / Cell.height)) {
+                // if (x < 0 || x >= (canvasRef.current.width / Cell.width) || y < 0 || y >= (canvasRef.current.height / Cell.height)) {
                     continue; 
                 } else if (x === xPos && y === yPos) {
                 // } else if (x === this.xPos && y === this.yPos) {

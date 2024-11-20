@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Cell from "./Cell";
 
 export default function GameOfLife() {
@@ -8,7 +8,9 @@ export default function GameOfLife() {
     const speed = 450; // ms
     // const speed = 1500; // ms for testing
     const [gameboard, setGameboard] = useState([]);
-    const [canvasState, setCanvasState] = useState({ canvas: null, context: null, height: CANVAS_HEIGHT, width: CANVAS_WIDTH }); // why are we using state for canvas? I forgot...
+    // const [canvasRef.current, setcanvasRef.current] = useState({ canvas: null, context: null, height: CANVAS_HEIGHT, width: CANVAS_WIDTH }); // why are we using state for canvas? I forgot...
+    const canvasRef = useRef(null); 
+    const contextRef = useRef(null); 
     const numRows = CANVAS_HEIGHT / Cell.height;
     const numCols = CANVAS_WIDTH / Cell.width;
     // const canvas = document.getElementById('canvas'); 
@@ -16,10 +18,12 @@ export default function GameOfLife() {
     
     // // setup and draw the blank canvas 
     useEffect(() => {
-        const canvas = document.getElementById("canvas");
-        const context = canvas.getContext("2d");
-        setCanvasState({ canvas: canvas, context: context})
-        
+        const canvas = canvasRef.current; 
+        const context = canvas?.getContext('2d'); 
+        contextRef.current = context; 
+
+        // if (!canvas || !context) return; 
+
         // context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         context.fillStyle = 'rgb(8,8,8)';
         context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -40,33 +44,37 @@ export default function GameOfLife() {
         let numRows = CANVAS_HEIGHT / Cell.height;
         let numCols = CANVAS_WIDTH / Cell.width;
         let initialGameboard = []; 
+        const context = contextRef.current;  
+        if (!context) return; 
             for (let y = 0; y < numRows; y++) {
                 for (let x = 0; x < numCols; x++) {
-                    initialGameboard.push(new Cell(canvasState.context, x, y));
+                    initialGameboard.push(new Cell(context, x, y));
                 }
             }
             // console.log(gameboard); // []
-            // console.log(canvasState); 
+            // console.log(canvasRef.current); 
             setGameboard(initialGameboard); 
-        // }, [canvasState]); // this was causing a rerender issue
+        // }, [canvasRef.current]); // this was causing a rerender issue
         }, []); 
 
     function drawAllCells() { 
             let xPoint = 10;
             let yPoint = 10; 
-            let step = 20; 
+            let CELL_SIZE_STEP = 20; // 20 x 20
+            // const context = canvasRef.current.getContext('2d'); 
+            const context = contextRef.current; 
             gameboard.forEach((cell, index) => {
                 // let xStep = 
                 // let yStep = 20; 
                 // modulo 128 step up y, set x to 0
                 if ((index + 1) % 64 === 0) { // then we are at the last cell on the right side of the grid
-                    cell.drawHexagonCell(canvasState.context, xPoint, yPoint);
+                    cell.drawHexagonCell(context, xPoint, yPoint);
                     // debugger; 
-                    yPoint += step;
+                    yPoint += CELL_SIZE_STEP;
                     xPoint = 10; 
                 } else {
-                    cell.drawHexagonCell(canvasState.context, xPoint, yPoint);
-                    xPoint += step; 
+                    cell.drawHexagonCell(context, xPoint, yPoint);
+                    xPoint += CELL_SIZE_STEP; 
                 }
             }); 
         }
@@ -83,46 +91,68 @@ export default function GameOfLife() {
         
        function lifecycleLoop() {
         // let nextLifeCycle = []; 
-        // if (!canvasState.context) {return}
+        // if (!canvasRef.current.context) {return}
+        // const context = canvasRef.current.getContext('2d'); 
+        const context = contextRef.current; 
 
         // assess which cells will be alive next round - update state
             // determine which cells are alive and dead
         let updatedGameboard = gameboard.map(cell => cell); 
         updatedGameboard.forEach(cell => {
-                    let neighborPositions = cell.getValidNeighborPositions(cell.xPos, cell.yPos); 
+                    let neighborPositions = cell.getValidNeighborPositions(cell.xPos, cell.yPos, canvasRef.current); 
                     // console.log(neighborPositions); 
                     // how many alive neighbors do you have?
                     let numAliveNeighbors = neighborPositions.reduce((num, position) => {
                         let index = gridToArrayIndex(position[0], position[1]); 
-                            return num + (updatedGameboard[index].isAlive() ? 1 : 0); 
+                            return num + (gameboard[index].isAlive() ? 1 : 0); 
                     }, 0); 
                     // does the cell live or die
+        let newCell = new Cell(context, cell.xPos, cell.yPos); 
+        newCell.status = cell.isAlive() ? (numAliveNeighbors === 2 || numAliveNeighbors === 3) ? 1 : 0 : numAliveNeighbors === 3 ? 1 : 0; 
+        
+        // if (cell.isAlive()) {
+        //     if (numAliveNeighbors === 2 || numAliveNeighbors === 3) {
+        //         newCell.status = 1; // Stay alive
+        //     } else {
+        //         newCell.status = 0; // Die
+        //     }
+        // } else {
+        //     if (numAliveNeighbors === 3) {
+        //         newCell.status = 1; // Come to life
+        //     } else {
+        //         newCell.status = 0; // Stay dead
+        //     }
+        // }        
+
                         // console.log(numAliveNeighbors); 
-                        if (numAliveNeighbors === 2) {
-                            // Do nothing, don't change state
-                        } else if (numAliveNeighbors === 3){
-                            // Make alive
-                            cell.comeAlive();
-                        } else {
-                            // Make dead
-                            cell.die(); 
-                        }
+                        // if (numAliveNeighbors === 2) {
+                        //     // Do nothing, don't change state
+                        // } else if (numAliveNeighbors === 3) {
+                        //     // Make alive
+                        //     // cell.comeAlive();
+
+                        // } else {
+                        //     // Make dead
+                        //     cell.die(); 
+                        // }
+
+                        return newCell; 
                 }); 
 
         // update the next gameboard
-                updatedGameboard.forEach(cell => {
-                    cell.status = cell.statusNextCycle; 
-                }); 
+                // updatedGameboard.forEach(cell => {
+                //     cell.status = cell.statusNextCycle; 
+                // }); 
 
         // // update the state
         setGameboard(updatedGameboard); 
 
 
         // clear the canvas then redraw the background color
-            // canvasState.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            canvasState.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            canvasState.context.fillStyle = 'rgb(8,8,8)';
-            canvasState.context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            // canvasRef.current.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            context.fillStyle = 'rgb(8,8,8)';
+            context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // draw the new cells in
             drawAllCells(); 
@@ -142,7 +172,7 @@ export default function GameOfLife() {
         return (
             <>
         {/* <h1>This is the gameboard. We&apos;re gonna do Canvas for this one...</h1> */}
-        <canvas id='canvas' width={CANVAS_WIDTH} height={CANVAS_HEIGHT} className=''></canvas>
+        <canvas id='canvas' ref={canvasRef} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} className=''></canvas>
         </>
     )
 }
