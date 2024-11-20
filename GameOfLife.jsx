@@ -6,6 +6,7 @@ export default function GameOfLife() {
     const CANVAS_WIDTH = 1280; 
     const CANVAS_HEIGHT = 760; 
     const speed = 450; // ms
+    // const speed = 1500; // ms for testing
     const [gameboard, setGameboard] = useState([]);
     const [canvasState, setCanvasState] = useState({ canvas: null, context: null, height: CANVAS_HEIGHT, width: CANVAS_WIDTH }); // why are we using state for canvas? I forgot...
     const numRows = CANVAS_HEIGHT / Cell.height;
@@ -19,6 +20,7 @@ export default function GameOfLife() {
         const context = canvas.getContext("2d");
         setCanvasState({ canvas: canvas, context: context})
         
+        // context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         context.fillStyle = 'rgb(8,8,8)';
         context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         
@@ -73,15 +75,15 @@ export default function GameOfLife() {
             return x + (y * numCols);
         }
 
-        function getCell(x, y) {
-            return gameboard.filter((cell) => {
-                return x === cell.xPos && y === cell.yPos; 
-            })
-        }
+        // function getCell(x, y) {
+        //     return gameboard.filter((cell) => {
+        //         return x === cell.xPos && y === cell.yPos; 
+        //     })
+        // }
         
        function lifecycleLoop() {
         // let nextLifeCycle = []; 
-        if (!canvasState.context) {return}
+        // if (!canvasState.context) {return}
 
         // assess which cells will be alive next round - update state
             // determine which cells are alive and dead
@@ -107,21 +109,22 @@ export default function GameOfLife() {
                         }
                 }); 
 
-                // update the next gameboard
+        // update the next gameboard
                 updatedGameboard.forEach(cell => {
                     cell.status = cell.statusNextCycle; 
                 }); 
 
-        // // update the canvas
+        // // update the state
         setGameboard(updatedGameboard); 
 
 
-            // clear the canvas then redraw the background color
+        // clear the canvas then redraw the background color
+            // canvasState.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             canvasState.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             canvasState.context.fillStyle = 'rgb(8,8,8)';
             canvasState.context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-            // draw the new cells in
+        // draw the new cells in
             drawAllCells(); 
 
             // loop this whole process on a timer
