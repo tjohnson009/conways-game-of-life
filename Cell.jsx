@@ -9,6 +9,7 @@ export default class Cell {
         this.context = context; 
         this.xPos = xPos; 
         this.yPos = yPos; 
+        this.statusNextCycle = null; 
     }
     // ctx.fillStyle = Cell.ALIVE_COLOR; 
     // ctx.fillRect(50, 50, 10, 10); 
@@ -19,15 +20,15 @@ export default class Cell {
 
     handleClick() {
         // makes the cell alive during the simulation
-        this.comeAlive(); 
+        this.status = 1; 
     }
 
-    getNumOfAliveNeighbors(xPos, yPos) {
-    // getValidNeighborhoodPositions(xPos, yPos) {
+    // getNumOfAliveNeighbors(xPos, yPos) {
+    getValidNeighborPositions(xPos, yPos) {
     // getNumOfAliveNeighbors() {
         // return gameboard[gridToArrayIndex(xPos, yPos)].reduce((totalAliveNeighbors, cell) => {
         // }, 0); 
-    let validNeighbors = []
+    let validPositions = []
     // console.log(this.context.canvas.width); 
         for (let y = this.yPos - 1; y <= this.yPos + 1; y++) {
             for (let x = this.xPos - 1; x <= this.xPos +1; x++) {
@@ -40,22 +41,25 @@ export default class Cell {
                     continue; 
                 }
                 // return gameboard[gridToArrayIndex(xPos, yPos)].isAlive()
-                validNeighbors.push([x, y]); 
+                validPositions.push([x, y]); 
             }
         }
-        return validNeighbors.reduce((num, cell) => {
-            return num + (cell.isAlive() ? 1 : 0)
-        }, 0); 
+        // return validPositions.reduce((num, cell) => {
+        //     return num + (cell.isAlive() ? 1 : 0)
+        // }, 0); 
         // console.log(validNeighbors.length); 
+        return validPositions; 
     }
     
 
     comeAlive() {
-        this.status = 1; 
+        // this.status = 1; 
+        this.statusNextCycle = 1; 
     }
 
     die() {
-        this.status = 0; 
+        // this.status = 0; 
+        this.statusNextCycle = 0; 
     }
 
     drawHexagonCell(context, xCenter, yCenter) {

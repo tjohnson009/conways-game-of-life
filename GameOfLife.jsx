@@ -5,7 +5,7 @@ export default function GameOfLife() {
     // aspect ratio is around 16:10 - 76 cells x 128 cells for 20 x 20 cells - 2342 total cells
     const CANVAS_WIDTH = 1280; 
     const CANVAS_HEIGHT = 760; 
-    const speed = 1000; // ms
+    const speed = 450; // ms
     const [gameboard, setGameboard] = useState([]);
     const [canvasState, setCanvasState] = useState({ canvas: null, context: null, height: CANVAS_HEIGHT, width: CANVAS_WIDTH }); // why are we using state for canvas? I forgot...
     const numRows = CANVAS_HEIGHT / Cell.height;
@@ -46,7 +46,8 @@ export default function GameOfLife() {
             // console.log(gameboard); // []
             // console.log(canvasState); 
             setGameboard(initialGameboard); 
-        }, [canvasState]); 
+        // }, [canvasState]); // this was causing a rerender issue
+        }, []); 
 
     function drawAllCells() { 
             let xPoint = 10;
@@ -68,7 +69,7 @@ export default function GameOfLife() {
             }); 
         }
 
-        function gridToArrayIndex(x, y) {
+        function gridToArrayIndex(x, y) { // quick access for the gameboard array - write your code to get the positions again
             return x + (y * numCols);
         }
 
@@ -82,16 +83,37 @@ export default function GameOfLife() {
         // let nextLifeCycle = []; 
         if (!canvasState.context) {return}
 
-            // assess which cells will be alive next round - update state
-                // determine which cells are alive and dead
-                let updatedGameboard = []; 
-                // for (let y = 0; y < numRows; y++) {
-                //     for (let x = 0; x < numCols; x++) {
-                //     }
-                // }
-                gameboard.forEach(cell => cell.getNumOfAliveNeighbors(cell.xPos, cell.yPos)); 
+        // assess which cells will be alive next round - update state
+            // determine which cells are alive and dead
+        let updatedGameboard = gameboard.map(cell => cell); 
+        updatedGameboard.forEach(cell => {
+                    let neighborPositions = cell.getValidNeighborPositions(cell.xPos, cell.yPos); 
+                    // console.log(neighborPositions); 
+                    // how many alive neighbors do you have?
+                    let numAliveNeighbors = neighborPositions.reduce((num, position) => {
+                        let index = gridToArrayIndex(position[0], position[1]); 
+                            return num + (updatedGameboard[index].isAlive() ? 1 : 0); 
+                    }, 0); 
+                    // does the cell live or die
+                        // console.log(numAliveNeighbors); 
+                        if (numAliveNeighbors === 2) {
+                            // Do nothing, don't change state
+                        } else if (numAliveNeighbors === 3){
+                            // Make alive
+                            cell.comeAlive();
+                        } else {
+                            // Make dead
+                            cell.die(); 
+                        }
+                }); 
 
-                
+                // update the next gameboard
+                updatedGameboard.forEach(cell => {
+                    cell.status = cell.statusNextCycle; 
+                }); 
+
+        // // update the canvas
+        setGameboard(updatedGameboard); 
 
 
             // clear the canvas then redraw the background color
@@ -109,7 +131,10 @@ export default function GameOfLife() {
         }
 
         // initial state of the game ?? 
-         window.requestAnimationFrame(() => lifecycleLoop()); 
+        //  window.requestAnimationFrame(() => lifecycleLoop()); 
+        setTimeout(() => {
+            window.requestAnimationFrame(() => lifecycleLoop());
+        }, speed); 
 
         return (
             <>
