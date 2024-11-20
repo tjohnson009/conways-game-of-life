@@ -78,10 +78,11 @@ export default class Cell {
             }
         }
         context.closePath(); 
-        context.stroke();  // this might not be necessary... 
-
+        context.lineWidth = 0; 
+        
         context.fillStyle = this.status === 1 ? Cell.ALIVE_COLOR : Cell.DEAD_COLOR; 
         context.fill(); 
+        context.stroke();  
         // console.log('Hexagon cell drawn'); 
     }
 }

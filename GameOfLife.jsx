@@ -5,7 +5,7 @@ export default function GameOfLife() {
     // aspect ratio is around 16:10 - 76 cells x 128 cells for 20 x 20 cells - 2342 total cells
     const CANVAS_WIDTH = 1280; 
     const CANVAS_HEIGHT = 760; 
-    const speed = 450; // ms
+    const speed = 250; // ms
     // const speed = 1500; // ms for testing
     const [gameboard, setGameboard] = useState([]);
     // const [canvasRef.current, setcanvasRef.current] = useState({ canvas: null, context: null, height: CANVAS_HEIGHT, width: CANVAS_WIDTH }); // why are we using state for canvas? I forgot...
