@@ -148,17 +148,16 @@ export default function GameOfLife() {
         // draw the new cells in
             drawAllCells(); 
 
-            // loop this whole process on a timer
-        //     setTimeout(() => {
-        //        window.requestAnimationFrame(() => lifecycleLoop());
-        //    }, speed) 
+            window.requestAnimationFrame(lifecycleLoop)
+            // window.requestAnimationFrame(() => lifecycleLoop())
         }
 
         // initial state of the game ?? 
         //  window.requestAnimationFrame(() => lifecycleLoop()); 
-        setTimeout(() => {
-            window.requestAnimationFrame(() => lifecycleLoop());
-        }, speed); 
+        // setTimeout(() => {
+            // window.requestAnimationFrame(lifecycleLoop);
+            // window.requestAnimationFrame(() => lifecycleLoop());
+        // }, speed); 
 
         return (
             <>
