@@ -1,20 +1,23 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Cell from "./Cell";
 
 export default function GameOfLife() {
+    // debugger; 
     // aspect ratio is around 16:10 - 76 cells x 128 cells for 20 x 20 cells - 2342 total cells
     const CANVAS_WIDTH = 1280; 
     const CANVAS_HEIGHT = 760; 
     const speed = 250; // ms
+    // let lastTimeframeRef.current = 0; 
+    const lastTimeframeRef = useRef(0); 
     // const speed = 1500; // ms for testing
-    const [gameboard, setGameboard] = useState([]);
+    // const [gameboard, setGameboard] = useState([]);
+    const gameboardRef = useRef([]);
     // const [canvasRef.current, setcanvasRef.current] = useState({ canvas: null, context: null, height: CANVAS_HEIGHT, width: CANVAS_WIDTH }); // why are we using state for canvas? I forgot...
     const canvasRef = useRef(null); 
     const contextRef = useRef(null); 
     // const numRows = CANVAS_HEIGHT / Cell.height;
     const numCols = CANVAS_WIDTH / Cell.width;
-    // const canvas = document.getElementById('canvas'); 
-    // const context = canvas.getContext('2d'); 
+
     
     // // setup and draw the blank canvas 
     useEffect(() => {
@@ -22,7 +25,11 @@ export default function GameOfLife() {
         const context = canvas?.getContext('2d'); 
         contextRef.current = context; 
 
-        // if (!canvas || !context) return; 
+        if (!canvas || !context) {
+            console.log(context ? canvas : context); 
+        } else {
+            console.log(context, canvas); 
+        }
 
         // context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         context.fillStyle = 'rgb(8,8,8)';
@@ -45,25 +52,46 @@ export default function GameOfLife() {
         let numCols = CANVAS_WIDTH / Cell.width;
         let initialGameboard = []; 
         const context = contextRef.current;  
-        if (!context) return; 
+        if (!context) {
+            console.error('Context failed!'); 
+            return
+        } else {
+            console.log('Successful initialization'); 
+        }; 
             for (let y = 0; y < numRows; y++) {
                 for (let x = 0; x < numCols; x++) {
                     initialGameboard.push(new Cell(context, x, y));
                 }
             }
+            // debugger;  
             // console.log(gameboard); // []
             // console.log(canvasRef.current); 
-            setGameboard(initialGameboard); 
+            console.log('initial gameboard', initialGameboard); 
+            // setGameboard(initialGameboard); 
+            gameboardRef.current = initialGameboard;
+            // console.log(gameboard.length === 0 ? 'Gameboard initialization failed.' : 'Successfully initialized successful.'); 
+            // console.log(gameboard); 
         // }, [canvasRef.current]); // this was causing a rerender issue
         }, []); 
 
+        // console.log(gameboard); 
+
     function drawAllCells() { 
+            // clearCanvas(); 
             let xPoint = 10;
             let yPoint = 10; 
             let CELL_SIZE_STEP = 20; // 20 x 20
             // const context = canvasRef.current.getContext('2d'); 
             const context = contextRef.current; 
-            gameboard.forEach((cell, index) => {
+            // console.log('Drawing cells. Gameboard length:', gameboard.length); // 0
+            // if (!context) {
+            //      console.error('Context is null during drawAllCells.');
+            //         return;
+            //     } else {
+            //         // console.log('No error found ind drawing cells'); 
+            //     }
+            // console.log('before drawing', gameboard); // []
+            gameboardRef.current.forEach((cell, index) => {
                 // let xStep = 
                 // let yStep = 20; 
                 // modulo 128 step up y, set x to 0
@@ -79,6 +107,15 @@ export default function GameOfLife() {
             }); 
         }
 
+    function clearCanvas() {
+        const context = contextRef.current;
+        if (context) {
+            context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); // Clears everything on the canvas
+            context.fillStyle = 'rgb(8,8,8)'; // Resets the background color
+            context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        }
+    }
+
         function gridToArrayIndex(x, y) { // quick access for the gameboard array - write your code to get the positions again
             return x + (y * numCols);
         }
@@ -89,79 +126,80 @@ export default function GameOfLife() {
         //     })
         // }
         
-       function lifecycleLoop() {
-        // let nextLifeCycle = []; 
-        // if (!canvasRef.current.context) {return}
-        // const context = canvasRef.current.getContext('2d'); 
-        // const context = contextRef.current; 
+       function lifecycleLoop(timestamp) {
+        // debugger; 
+        if (!lastTimeframeRef.current) {
+            lastTimeframeRef.current = timestamp; 
+        }
 
-        // assess which cells will be alive next round - update state
-            // determine which cells are alive and dead
-        // let updatedGameboard = gameboard.map(cell => cell); 
-       let updatedGameboard = gameboard.map(cell => {
+        const elapsedTime = Math.floor(timestamp - lastTimeframeRef.current); 
+        
+        if (elapsedTime >= speed) {
+            lastTimeframeRef.current = timestamp; 
+        // }
+            // console.log(gameboard, contextRef, canvasRef); 
+
+       let updatedGameboard = gameboardRef.current.map(cell => {
                     let neighborPositions = cell.getValidNeighborPositions(cell.xPos, cell.yPos, canvasRef.current); 
                     // console.log(neighborPositions); 
                     // how many alive neighbors do you have?
                     let numAliveNeighbors = neighborPositions.reduce((num, position) => {
                         let index = gridToArrayIndex(position[0], position[1]); 
-                            return num + (gameboard[index].isAlive() ? 1 : 0); 
+                            return num + (gameboardRef.current[index].isAlive() ? 1 : 0); 
                     }, 0); 
 
+                    // let newCell = new Cell(contextRef.current, cell.xPos, cell.yPos); 
                         // console.log(numAliveNeighbors); 
                         if (numAliveNeighbors === 2) {
                             // Do nothing, don't change state
+                            // newCell.status = cell.status; 
                         } else if (numAliveNeighbors === 3) {
                             // Make alive
                             cell.comeAlive();
+                            // newCell.comeAlive();
+                            // newCell.status = 1; 
                         } else {
                             // Make dead
                             cell.die(); 
+                            // newCell.die(); 
+                            // newCell.status = 0; 
                         }
 
                         return cell; 
+                        // return newCell; 
                 }); 
-
+                // console.log(updatedGameboard); 
         // update the next gameboard
                 updatedGameboard.forEach(cell => {
                     cell.status = cell.statusNextCycle; 
                 }); 
 
         // // update the state
-        setGameboard(updatedGameboard); 
-
+        // setGameboard(updatedGameboard); // [] ?
+        gameboardRef.current = updatedGameboard; 
 
         // clear the canvas then redraw the background color
             // contextRef.current.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             // contextRef.current.fillStyle = 'rgb(8,8,8)';
             // contextRef.current.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-            // function clearCanvas() {
-            //     const context = contextRef.current;
-            //     if (context) {
-            //         context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            //         context.fillStyle = 'rgb(8,8,8)'; // Redraw background
-            //         context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            //     }
-            // }
             
 
         // draw the new cells in
-            drawAllCells(); 
-
-            window.requestAnimationFrame(lifecycleLoop)
-            // window.requestAnimationFrame(() => lifecycleLoop())
-        }
-
-        // initial state of the game ?? 
-        //  window.requestAnimationFrame(() => lifecycleLoop()); 
-        // setTimeout(() => {
-            // window.requestAnimationFrame(lifecycleLoop);
+        // debugger; 
+        drawAllCells(); 
+    }
+    
+        // drawAllCells(); 
+            window.requestAnimationFrame(lifecycleLoop); 
             // window.requestAnimationFrame(() => lifecycleLoop());
-        // }, speed); 
+        }
+            
+
+            window.requestAnimationFrame(() => lifecycleLoop());
 
         return (
             <>
-        {/* <h1>This is the gameboard. We&apos;re gonna do Canvas for this one...</h1> */}
         <canvas id='canvas' ref={canvasRef} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} className=''></canvas>
         </>
     )

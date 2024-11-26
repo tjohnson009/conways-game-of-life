@@ -11,8 +11,6 @@ export default class Cell {
         this.yPos = yPos; 
         this.statusNextCycle = null; 
     }
-    // ctx.fillStyle = Cell.ALIVE_COLOR; 
-    // ctx.fillRect(50, 50, 10, 10); 
 
     isAlive() {
         return this.status === 1 ? true: false; 
