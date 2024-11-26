@@ -11,7 +11,7 @@ export default function GameOfLife() {
     // const [canvasRef.current, setcanvasRef.current] = useState({ canvas: null, context: null, height: CANVAS_HEIGHT, width: CANVAS_WIDTH }); // why are we using state for canvas? I forgot...
     const canvasRef = useRef(null); 
     const contextRef = useRef(null); 
-    const numRows = CANVAS_HEIGHT / Cell.height;
+    // const numRows = CANVAS_HEIGHT / Cell.height;
     const numCols = CANVAS_WIDTH / Cell.width;
     // const canvas = document.getElementById('canvas'); 
     // const context = canvas.getContext('2d'); 
@@ -93,12 +93,12 @@ export default function GameOfLife() {
         // let nextLifeCycle = []; 
         // if (!canvasRef.current.context) {return}
         // const context = canvasRef.current.getContext('2d'); 
-        const context = contextRef.current; 
+        // const context = contextRef.current; 
 
         // assess which cells will be alive next round - update state
             // determine which cells are alive and dead
-        let updatedGameboard = gameboard.map(cell => cell); 
-        updatedGameboard.forEach(cell => {
+        // let updatedGameboard = gameboard.map(cell => cell); 
+       let updatedGameboard = gameboard.map(cell => {
                     let neighborPositions = cell.getValidNeighborPositions(cell.xPos, cell.yPos, canvasRef.current); 
                     // console.log(neighborPositions); 
                     // how many alive neighbors do you have?
@@ -106,23 +106,6 @@ export default function GameOfLife() {
                         let index = gridToArrayIndex(position[0], position[1]); 
                             return num + (gameboard[index].isAlive() ? 1 : 0); 
                     }, 0); 
-                    // does the cell live or die
-        // let newCell = new Cell(context, cell.xPos, cell.yPos); 
-        // newCell.status = cell.isAlive() ? (numAliveNeighbors === 2 || numAliveNeighbors === 3) ? 1 : 0 : numAliveNeighbors === 3 ? 1 : 0; 
-        
-        // if (cell.isAlive()) {
-        //     if (numAliveNeighbors === 2 || numAliveNeighbors === 3) {
-        //         newCell.status = 1; // Stay alive
-        //     } else {
-        //         newCell.status = 0; // Die
-        //     }
-        // } else {
-        //     if (numAliveNeighbors === 3) {
-        //         newCell.status = 1; // Come to life
-        //     } else {
-        //         newCell.status = 0; // Stay dead
-        //     }
-        // }        
 
                         // console.log(numAliveNeighbors); 
                         if (numAliveNeighbors === 2) {
@@ -135,7 +118,7 @@ export default function GameOfLife() {
                             cell.die(); 
                         }
 
-                        // return newCell; 
+                        return cell; 
                 }); 
 
         // update the next gameboard
@@ -148,10 +131,19 @@ export default function GameOfLife() {
 
 
         // clear the canvas then redraw the background color
-            // canvasRef.current.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            // context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            // context.fillStyle = 'rgb(8,8,8)';
-            // context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            // contextRef.current.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            // contextRef.current.fillStyle = 'rgb(8,8,8)';
+            // contextRef.current.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // function clearCanvas() {
+            //     const context = contextRef.current;
+            //     if (context) {
+            //         context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            //         context.fillStyle = 'rgb(8,8,8)'; // Redraw background
+            //         context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            //     }
+            // }
+            
 
         // draw the new cells in
             drawAllCells(); 
